@@ -13,12 +13,12 @@ class index
 {
     public function demo()
     {
-        $where = [];
-        $cnt = Db::table('demo')->where($where)->count();
+        $where = '1=1';
+        $cnt = $this->demoCnt($where);
         // 实例化分页类
-        $page = $this->getPage($cnt, $where, '/index/demo');
+        $page = $this->getPage($cnt[0]['cnt'], $where, '/index/demo');
 
-        $data = model('Demo')->demoList($page['firstRow'], $page['listRows']);
+        $data = $this->demoList($where,$page['firstRow'], $page['listRows']);
 
         return ['data' => $data, 'page' => $page['show']];
     }
@@ -46,5 +46,16 @@ class index
         }
         $show = $Page->show();// 分页显示输出
         return ['show' => $show,'firstRow' => $Page->firstRow,'listRows' => $Page->listRows];
+    }
+    public function demoCnt($where)
+    {
+        $sql = "SELECT count(1) as cnt from demo where $where";
+        return Db::query($sql);
+    }
+
+    public function demoList($where, $firstRow, $listRows)
+    {
+        $sql = "SELECT * from demo where $where limit $firstRow,$listRows";
+        return Db::query($sql);
     }
 }
